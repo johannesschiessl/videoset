@@ -125,7 +125,7 @@ export function QuestionManager({
   );
 
   return (
-    <Card className="h-full flex flex-col">
+    <>
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-lg font-semibold">Questions</h2>
@@ -322,6 +322,6 @@ export function QuestionManager({
           ))}
         </div>
       </ScrollArea>
-    </Card>
+    </>
   );
 }

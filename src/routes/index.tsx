@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { VideoPlayer, Question } from "@/components/VideoPlayer";
-import { QuestionManager } from "@/components/QuestionManager";
+import { ManagementPanel } from "@/components/ManagementPanel";
+import { ChapterNavigation } from "@/components/ChapterNavigation";
+import { Chapter } from "@/components/ChapterManager";
 import { QuestionOverlay } from "@/components/QuestionOverlay";
 import { ResultsSummary } from "@/components/ResultsSummary";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,9 @@ function App() {
     new Map()
   );
 
+  // Chapters state
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+
   // UI state
   const [showQuestionOverlay, setShowQuestionOverlay] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -41,6 +46,7 @@ function App() {
       setVideoFile(file);
       // Reset state
       setQuestions([]);
+      setChapters([]);
       setAnsweredQuestions(new Map());
       setCurrentTime(0);
       setShowResults(false);
@@ -136,6 +142,33 @@ function App() {
     setAnsweredQuestions(newAnswers);
   };
 
+  // Chapter management functions
+  const handleAddChapter = (chapterData: Omit<Chapter, "id">) => {
+    const newChapter: Chapter = {
+      ...chapterData,
+      id: `c_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+    setChapters([...chapters, newChapter]);
+  };
+
+  const handleEditChapter = (id: string, chapterData: Omit<Chapter, "id">) => {
+    setChapters(
+      chapters.map((c) =>
+        c.id === id ? { ...chapterData, id } : c
+      )
+    );
+  };
+
+  const handleDeleteChapter = (id: string) => {
+    setChapters(chapters.filter((c) => c.id !== id));
+  };
+
+  // Handle chapter click
+  const handleChapterClick = (timestamp: number) => {
+    setCurrentTime(timestamp);
+    setIsPlaying(true);
+  };
+
   // Handle video ended
   useEffect(() => {
     // Check if video has ended (within 1 second of duration)
@@ -218,6 +251,7 @@ function App() {
             onClick={() => {
               setVideoFile(null);
               setQuestions([]);
+              setChapters([]);
               setAnsweredQuestions(new Map());
               setCurrentTime(0);
               setIsPlaying(false);
@@ -231,7 +265,7 @@ function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Video Player - 2 columns on large screens */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-4">
             <VideoPlayer
               videoFile={videoFile}
               onVideoLoad={handleVideoLoad}
@@ -242,17 +276,28 @@ function App() {
               onPlayPause={handlePlayPause}
               onSeek={handleSeek}
             />
+
+            {/* Chapter Navigation */}
+            <ChapterNavigation
+              chapters={chapters}
+              currentTime={currentTime}
+              onChapterClick={handleChapterClick}
+            />
           </div>
 
-          {/* Question Manager - 1 column on large screens */}
+          {/* Management Panel - 1 column on large screens */}
           <div className="lg:col-span-1">
-            <QuestionManager
+            <ManagementPanel
               questions={questions}
-              currentTime={currentTime}
-              videoDuration={videoDuration}
               onAddQuestion={handleAddQuestion}
               onEditQuestion={handleEditQuestion}
               onDeleteQuestion={handleDeleteQuestion}
+              chapters={chapters}
+              onAddChapter={handleAddChapter}
+              onEditChapter={handleEditChapter}
+              onDeleteChapter={handleDeleteChapter}
+              currentTime={currentTime}
+              videoDuration={videoDuration}
             />
           </div>
         </div>
