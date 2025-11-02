@@ -85,6 +85,18 @@ export function VideoPlayer({
     }
   }, [isPlaying]);
 
+  // Sync currentTime from props to video element
+  useEffect(() => {
+    if (videoRef.current) {
+      const videoCurrent = videoRef.current.currentTime;
+      // Only update if there's a significant difference (more than 0.5 seconds)
+      // This prevents interference with normal playback
+      if (Math.abs(videoCurrent - currentTime) > 0.5) {
+        videoRef.current.currentTime = currentTime;
+      }
+    }
+  }, [currentTime]);
+
   // Handle seek
   const handleSliderChange = (values: number[]) => {
     const newTime = values[0];
