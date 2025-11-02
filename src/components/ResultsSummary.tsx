@@ -34,14 +34,14 @@ export function ResultsSummary({
   };
 
   const sortedQuestions = [...questions].sort(
-    (a, b) => a.timestamp - b.timestamp
+    (a, b) => a.timestamp - b.timestamp,
   );
 
   const answeredCount = Array.from(answers.keys()).length;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
+      <DialogContent className="max-h-[80vh] sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Results Summary</DialogTitle>
           <DialogDescription>
@@ -64,9 +64,7 @@ export function ResultsSummary({
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <Badge variant="secondary">
-                          Question {qIndex + 1}
-                        </Badge>
+                        <Badge variant="secondary">Question {qIndex + 1}</Badge>
                         <Badge variant="outline">
                           {formatTime(question.timestamp)}
                         </Badge>
@@ -82,9 +80,9 @@ export function ResultsSummary({
                         return (
                           <div
                             key={optIndex}
-                            className={`flex items-start gap-2 p-2 rounded-md text-sm ${
+                            className={`flex items-start gap-2 rounded-md p-2 text-sm ${
                               isSelected
-                                ? "bg-primary/10 border border-primary/20"
+                                ? "bg-primary/10 border-primary/20 border"
                                 : "bg-muted/50"
                             }`}
                           >
@@ -103,13 +101,13 @@ export function ResultsSummary({
                     </div>
 
                     {answerIndex === undefined && (
-                      <p className="text-sm text-muted-foreground italic">
+                      <p className="text-muted-foreground text-sm italic">
                         Not answered
                       </p>
                     )}
 
                     {selectedOption && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Jumped to {formatTime(selectedOption.jumpTo)}
                       </p>
                     )}
@@ -122,7 +120,7 @@ export function ResultsSummary({
 
         <div className="flex gap-2 pt-4">
           <Button onClick={onReplay} className="flex-1">
-            <RotateCcw className="h-4 w-4 mr-2" />
+            <RotateCcw className="mr-2 h-4 w-4" />
             Replay Video
           </Button>
           <Button variant="outline" onClick={onClose} className="flex-1">

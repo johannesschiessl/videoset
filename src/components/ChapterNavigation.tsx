@@ -21,7 +21,7 @@ export function ChapterNavigation({
 
   // Sort chapters by timestamp
   const sortedChapters = [...chapters].sort(
-    (a, b) => a.timestamp - b.timestamp
+    (a, b) => a.timestamp - b.timestamp,
   );
 
   // Find current chapter based on currentTime
@@ -46,9 +46,9 @@ export function ChapterNavigation({
     <Card className="p-4">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-sm">Chapters</h3>
+          <h3 className="text-sm font-semibold">Chapters</h3>
           {currentChapterIndex >= 0 && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               Now playing: {sortedChapters[currentChapterIndex].title}
             </span>
           )}
@@ -66,14 +66,14 @@ export function ChapterNavigation({
                   size="sm"
                   onClick={() => onChapterClick(chapter.timestamp)}
                   className={cn(
-                    "flex-shrink-0 flex flex-col items-start h-auto py-2 px-3 gap-1",
-                    isCurrent && "ring-2 ring-ring ring-offset-2"
+                    "flex h-auto flex-shrink-0 flex-col items-start gap-1 px-3 py-2",
+                    isCurrent && "ring-ring ring-2 ring-offset-2",
                   )}
                 >
                   <span className="text-xs opacity-70">
                     Chapter {index + 1}
                   </span>
-                  <span className="font-medium text-sm">{chapter.title}</span>
+                  <span className="text-sm font-medium">{chapter.title}</span>
                   <span className="text-xs opacity-70">
                     {formatTime(chapter.timestamp)}
                   </span>

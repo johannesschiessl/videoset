@@ -36,7 +36,7 @@ export function QuestionOverlay({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <p className="text-lg font-medium leading-relaxed">
+          <p className="text-lg leading-relaxed font-medium">
             {question.questionText}
           </p>
 
@@ -45,10 +45,10 @@ export function QuestionOverlay({
               <Button
                 key={index}
                 variant="outline"
-                className="w-full justify-start text-left h-auto py-3 px-4 hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="hover:bg-primary hover:text-primary-foreground h-auto w-full justify-start px-4 py-3 text-left transition-colors"
                 onClick={() => onAnswer(index, option.jumpTo)}
               >
-                <span className="font-mono mr-3 text-sm font-semibold">
+                <span className="mr-3 font-mono text-sm font-semibold">
                   {String.fromCharCode(65 + index)}.
                 </span>
                 <span className="flex-1">{option.text}</span>

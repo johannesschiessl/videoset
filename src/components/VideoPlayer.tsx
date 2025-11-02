@@ -150,7 +150,7 @@ export function VideoPlayer({
 
   if (!videoFile) {
     return (
-      <Card className="flex items-center justify-center h-full min-h-[400px] border-dashed">
+      <Card className="flex h-full min-h-[400px] items-center justify-center border-dashed">
         <p className="text-muted-foreground">No video selected</p>
       </Card>
     );
@@ -158,18 +158,18 @@ export function VideoPlayer({
 
   return (
     <Card className="overflow-hidden">
-      <div className="relative bg-black aspect-video">
+      <div className="relative aspect-video bg-black">
         <video
           ref={videoRef}
           src={videoUrl || undefined}
-          className="w-full h-full"
+          className="h-full w-full"
           onLoadedMetadata={handleLoadedMetadata}
           onTimeUpdate={handleTimeUpdate}
         />
       </div>
 
       {/* Controls */}
-      <div className="p-4 space-y-3">
+      <div className="space-y-3 p-4">
         {/* Timeline with markers */}
         <div className="relative">
           <Slider
@@ -180,11 +180,11 @@ export function VideoPlayer({
             className="cursor-pointer"
           />
           {/* Question markers */}
-          <div className="absolute top-0 left-0 w-full h-2 pointer-events-none">
+          <div className="pointer-events-none absolute top-0 left-0 h-2 w-full">
             {questions.map((question) => (
               <div
                 key={question.id}
-                className="absolute w-1 h-2 bg-primary rounded-full transform -translate-x-1/2"
+                className="bg-primary absolute h-2 w-1 -translate-x-1/2 transform rounded-full"
                 style={{ left: `${getMarkerPosition(question.timestamp)}%` }}
                 title={`Question at ${formatTime(question.timestamp)}`}
               />
@@ -193,7 +193,7 @@ export function VideoPlayer({
         </div>
 
         {/* Time display */}
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex justify-between text-sm">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>
@@ -213,7 +213,7 @@ export function VideoPlayer({
             )}
           </Button>
 
-          <div className="flex items-center gap-2 ml-auto w-32">
+          <div className="ml-auto flex w-32 items-center gap-2">
             <Button
               variant="ghost"
               size="icon"

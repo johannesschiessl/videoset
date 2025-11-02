@@ -110,7 +110,7 @@ export function QuestionManager({
   const updateOption = (
     index: number,
     field: "text" | "jumpTo",
-    value: string | number
+    value: string | number,
   ) => {
     const newOptions = [...formData.options];
     newOptions[index] = {
@@ -121,24 +121,24 @@ export function QuestionManager({
   };
 
   const sortedQuestions = [...questions].sort(
-    (a, b) => a.timestamp - b.timestamp
+    (a, b) => a.timestamp - b.timestamp,
   );
 
   return (
     <>
-      <div className="p-4 border-b">
-        <div className="flex items-center justify-between mb-2">
+      <div className="border-b p-4">
+        <div className="mb-2 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Questions</h2>
           <Button
             size="sm"
             onClick={startAdding}
             disabled={isAdding || editingId !== null}
           >
-            <Plus className="h-4 w-4 mr-1" />
+            <Plus className="mr-1 h-4 w-4" />
             Add Question
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {questions.length} question{questions.length !== 1 ? "s" : ""} added
         </p>
       </div>
@@ -146,7 +146,7 @@ export function QuestionManager({
       <ScrollArea className="flex-1 p-4">
         {/* Question Form */}
         {(isAdding || editingId) && (
-          <Card className="p-4 mb-4 border-primary">
+          <Card className="border-primary mb-4 p-4">
             <div className="space-y-4">
               <div>
                 <Label htmlFor="timestamp">Timestamp (seconds)</Label>
@@ -163,7 +163,7 @@ export function QuestionManager({
                     })
                   }
                 />
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-muted-foreground mt-1 text-xs">
                   {formatTime(formData.timestamp)}
                 </p>
               </div>
@@ -181,7 +181,7 @@ export function QuestionManager({
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2 flex items-center justify-between">
                   <Label>Answer Options</Label>
                   <Button
                     size="sm"
@@ -189,14 +189,14 @@ export function QuestionManager({
                     onClick={addOption}
                     disabled={formData.options.length >= 6}
                   >
-                    <Plus className="h-3 w-3 mr-1" />
+                    <Plus className="mr-1 h-3 w-3" />
                     Add Option
                   </Button>
                 </div>
 
                 <div className="space-y-3">
                   {formData.options.map((option, index) => (
-                    <div key={index} className="flex gap-2 items-start">
+                    <div key={index} className="flex items-start gap-2">
                       <div className="flex-1 space-y-2">
                         <Input
                           placeholder={`Option ${index + 1}`}
@@ -205,7 +205,7 @@ export function QuestionManager({
                             updateOption(index, "text", e.target.value)
                           }
                         />
-                        <div className="flex gap-2 items-center">
+                        <div className="flex items-center gap-2">
                           <Input
                             type="number"
                             placeholder="Jump to (seconds)"
@@ -216,12 +216,12 @@ export function QuestionManager({
                               updateOption(
                                 index,
                                 "jumpTo",
-                                parseFloat(e.target.value)
+                                parseFloat(e.target.value),
                               )
                             }
                             className="flex-1"
                           />
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          <span className="text-muted-foreground text-xs whitespace-nowrap">
                             {formatTime(option.jumpTo)}
                           </span>
                         </div>
@@ -242,7 +242,7 @@ export function QuestionManager({
 
               <div className="flex gap-2 pt-2">
                 <Button onClick={saveQuestion} className="flex-1">
-                  <Check className="h-4 w-4 mr-1" />
+                  <Check className="mr-1 h-4 w-4" />
                   {editingId ? "Update" : "Save"}
                 </Button>
                 <Button
@@ -250,7 +250,7 @@ export function QuestionManager({
                   onClick={cancelForm}
                   className="flex-1"
                 >
-                  <X className="h-4 w-4 mr-1" />
+                  <X className="mr-1 h-4 w-4" />
                   Cancel
                 </Button>
               </div>
@@ -260,7 +260,7 @@ export function QuestionManager({
 
         {/* Questions List */}
         {sortedQuestions.length === 0 && !isAdding && !editingId && (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-muted-foreground py-8 text-center">
             <p>No questions yet</p>
             <p className="text-sm">Click "Add Question" to get started</p>
           </div>
@@ -270,23 +270,23 @@ export function QuestionManager({
           {sortedQuestions.map((question) => (
             <Card
               key={question.id}
-              className="p-3 hover:border-primary/50 transition-colors"
+              className="hover:border-primary/50 p-3 transition-colors"
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex items-center gap-2">
                     <Badge variant="secondary">
                       {formatTime(question.timestamp)}
                     </Badge>
                   </div>
-                  <p className="font-medium text-sm mb-2">
+                  <p className="mb-2 text-sm font-medium">
                     {question.questionText}
                   </p>
                   <div className="space-y-1">
                     {question.options.map((option, index) => (
                       <div
                         key={index}
-                        className="text-xs text-muted-foreground flex items-center gap-2"
+                        className="text-muted-foreground flex items-center gap-2 text-xs"
                       >
                         <span className="font-mono">
                           {String.fromCharCode(65 + index)}.

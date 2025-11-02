@@ -35,8 +35,8 @@ export function ManagementPanel({
   videoDuration,
 }: ManagementPanelProps) {
   return (
-    <Card className="h-full flex flex-col overflow-hidden">
-      <Tabs defaultValue="questions" className="flex flex-col h-full">
+    <Card className="flex h-full flex-col overflow-hidden">
+      <Tabs defaultValue="questions" className="flex h-full flex-col">
         <TabsList className="w-full rounded-none border-b">
           <TabsTrigger value="questions" className="flex-1">
             Questions
@@ -46,7 +46,10 @@ export function ManagementPanel({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="questions" className="flex-1 flex flex-col m-0 overflow-hidden">
+        <TabsContent
+          value="questions"
+          className="m-0 flex flex-1 flex-col overflow-hidden"
+        >
           <QuestionManager
             questions={questions}
             currentTime={currentTime}
@@ -57,7 +60,10 @@ export function ManagementPanel({
           />
         </TabsContent>
 
-        <TabsContent value="chapters" className="flex-1 flex flex-col m-0 overflow-hidden">
+        <TabsContent
+          value="chapters"
+          className="m-0 flex flex-1 flex-col overflow-hidden"
+        >
           <ChapterManager
             chapters={chapters}
             currentTime={currentTime}

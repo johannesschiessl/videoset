@@ -24,9 +24,9 @@ function App() {
   // Questions state
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [answeredQuestions, setAnsweredQuestions] = useState<Map<string, number>>(
-    new Map()
-  );
+  const [answeredQuestions, setAnsweredQuestions] = useState<
+    Map<string, number>
+  >(new Map());
 
   // Chapters state
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -124,11 +124,12 @@ function App() {
     setQuestions([...questions, newQuestion]);
   };
 
-  const handleEditQuestion = (id: string, questionData: Omit<Question, "id">) => {
+  const handleEditQuestion = (
+    id: string,
+    questionData: Omit<Question, "id">,
+  ) => {
     setQuestions(
-      questions.map((q) =>
-        q.id === id ? { ...questionData, id } : q
-      )
+      questions.map((q) => (q.id === id ? { ...questionData, id } : q)),
     );
   };
 
@@ -153,9 +154,7 @@ function App() {
 
   const handleEditChapter = (id: string, chapterData: Omit<Chapter, "id">) => {
     setChapters(
-      chapters.map((c) =>
-        c.id === id ? { ...chapterData, id } : c
-      )
+      chapters.map((c) => (c.id === id ? { ...chapterData, id } : c)),
     );
   };
 
@@ -200,16 +199,16 @@ function App() {
   // Render file selection screen
   if (!videoFile) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md p-8">
-          <div className="text-center space-y-4">
+          <div className="space-y-4 text-center">
             <div className="flex justify-center">
-              <div className="rounded-full bg-primary/10 p-6">
-                <Upload className="h-12 w-12 text-primary" />
+              <div className="bg-primary/10 rounded-full p-6">
+                <Upload className="text-primary h-12 w-12" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold mb-2">
+              <h1 className="mb-2 text-2xl font-bold">
                 Interactive Video Player
               </h1>
               <p className="text-muted-foreground">
@@ -240,11 +239,11 @@ function App() {
   // Main app layout
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-7xl mx-auto space-y-4">
+      <div className="mx-auto max-w-7xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Interactive Video Player</h1>
-            <p className="text-sm text-muted-foreground">{videoFile.name}</p>
+            <p className="text-muted-foreground text-sm">{videoFile.name}</p>
           </div>
           <Button
             variant="outline"
@@ -263,9 +262,9 @@ function App() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {/* Video Player - 2 columns on large screens */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4 lg:col-span-2">
             <VideoPlayer
               videoFile={videoFile}
               onVideoLoad={handleVideoLoad}
