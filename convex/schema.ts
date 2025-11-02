@@ -35,4 +35,27 @@ export default defineSchema({
   })
     .index("by_video", ["videoId"])
     .index("by_question", ["questionId"]),
+
+  surveyQuestions: defineTable({
+    videoId: v.id("videos"),
+    questionText: v.string(),
+    questionType: v.union(
+      v.literal("text"),
+      v.literal("number"),
+      v.literal("radio")
+    ),
+    options: v.optional(v.array(v.string())), // For radio type
+    required: v.boolean(),
+    order: v.number(),
+  }).index("by_video", ["videoId"]),
+
+  surveyResponses: defineTable({
+    videoId: v.id("videos"),
+    surveyQuestionId: v.id("surveyQuestions"),
+    response: v.string(),
+    sessionId: v.optional(v.string()), // To group responses from same session
+  })
+    .index("by_video", ["videoId"])
+    .index("by_question", ["surveyQuestionId"])
+    .index("by_session", ["sessionId"]),
 });

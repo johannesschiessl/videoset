@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuestionManager } from "./QuestionManager";
 import { ChapterManager, Chapter } from "./ChapterManager";
+import { SurveyManager, SurveyQuestion } from "./SurveyManager";
 import { Question } from "./VideoPlayer";
 
 interface ManagementPanelProps {
@@ -17,6 +18,12 @@ interface ManagementPanelProps {
   onEditChapter: (id: string, chapter: Omit<Chapter, "id">) => void;
   onDeleteChapter: (id: string) => void;
 
+  // Survey props
+  surveyQuestions: SurveyQuestion[];
+  onAddSurveyQuestion: (question: Omit<SurveyQuestion, "id">) => void;
+  onEditSurveyQuestion: (id: string, question: Omit<SurveyQuestion, "id">) => void;
+  onDeleteSurveyQuestion: (id: string) => void;
+
   // Shared props
   currentTime: number;
   videoDuration: number;
@@ -31,6 +38,10 @@ export function ManagementPanel({
   onAddChapter,
   onEditChapter,
   onDeleteChapter,
+  surveyQuestions,
+  onAddSurveyQuestion,
+  onEditSurveyQuestion,
+  onDeleteSurveyQuestion,
   currentTime,
   videoDuration,
 }: ManagementPanelProps) {
@@ -43,6 +54,9 @@ export function ManagementPanel({
           </TabsTrigger>
           <TabsTrigger value="chapters" className="flex-1">
             Chapters
+          </TabsTrigger>
+          <TabsTrigger value="survey" className="flex-1">
+            Survey
           </TabsTrigger>
         </TabsList>
 
@@ -71,6 +85,18 @@ export function ManagementPanel({
             onAddChapter={onAddChapter}
             onEditChapter={onEditChapter}
             onDeleteChapter={onDeleteChapter}
+          />
+        </TabsContent>
+
+        <TabsContent
+          value="survey"
+          className="m-0 flex flex-1 flex-col overflow-hidden"
+        >
+          <SurveyManager
+            surveyQuestions={surveyQuestions}
+            onAddSurveyQuestion={onAddSurveyQuestion}
+            onEditSurveyQuestion={onEditSurveyQuestion}
+            onDeleteSurveyQuestion={onDeleteSurveyQuestion}
           />
         </TabsContent>
       </Tabs>

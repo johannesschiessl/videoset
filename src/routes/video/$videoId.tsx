@@ -8,6 +8,7 @@ import { ManagementPanel } from "@/components/ManagementPanel";
 import { ChapterNavigation } from "@/components/ChapterNavigation";
 import { QuestionOverlay } from "@/components/QuestionOverlay";
 import { ResultsSummary } from "@/components/ResultsSummary";
+import { SurveyDialog } from "@/components/SurveyDialog";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/video/$videoId")({
@@ -26,6 +27,9 @@ function VideoPage() {
   const chaptersData = useQuery(api.chapters.getChaptersByVideo, {
     videoId: videoIdTyped,
   });
+  const surveyQuestionsData = useQuery(api.surveys.getSurveyQuestionsByVideo, {
+    videoId: videoIdTyped,
+  });
 
   // Mutations
   const addQuestion = useMutation(api.questions.addQuestion);
@@ -34,6 +38,10 @@ function VideoPage() {
   const addChapter = useMutation(api.chapters.addChapter);
   const updateChapter = useMutation(api.chapters.updateChapter);
   const deleteChapter = useMutation(api.chapters.deleteChapter);
+  const addSurveyQuestion = useMutation(api.surveys.addSurveyQuestion);
+  const updateSurveyQuestion = useMutation(api.surveys.updateSurveyQuestion);
+  const deleteSurveyQuestion = useMutation(api.surveys.deleteSurveyQuestion);
+  const submitSurveyResponses = useMutation(api.surveys.submitSurveyResponses);
 
   // Video state
   const [videoDuration, setVideoDuration] = useState(0);
@@ -47,6 +55,7 @@ function VideoPage() {
     new Map()
   );
   const [showResults, setShowResults] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
 
   // Refs
   const triggeredQuestionsRef = useRef<Set<string>>(new Set());
@@ -65,6 +74,16 @@ function VideoPage() {
       id: c._id,
       timestamp: c.timestamp,
       title: c.title,
+    })) || [];
+
+  const surveyQuestions =
+    surveyQuestionsData?.map((sq) => ({
+      id: sq._id,
+      questionText: sq.questionText,
+      questionType: sq.questionType,
+      options: sq.options,
+      required: sq.required,
+      order: sq.order,
     })) || [];
 
   // Handle video load
@@ -174,6 +193,60 @@ function VideoPage() {
     setIsPlaying(true);
   };
 
+  // Survey management
+  const handleAddSurveyQuestion = async (surveyData: any) => {
+    await addSurveyQuestion({
+      videoId: videoIdTyped,
+      questionText: surveyData.questionText,
+      questionType: surveyData.questionType,
+      options: surveyData.options,
+      required: surveyData.required,
+      order: surveyData.order,
+    });
+  };
+
+  const handleEditSurveyQuestion = async (id: string, surveyData: any) => {
+    await updateSurveyQuestion({
+      surveyQuestionId: id as Id<"surveyQuestions">,
+      questionText: surveyData.questionText,
+      questionType: surveyData.questionType,
+      options: surveyData.options,
+      required: surveyData.required,
+      order: surveyData.order,
+    });
+  };
+
+  const handleDeleteSurveyQuestion = async (id: string) => {
+    await deleteSurveyQuestion({ surveyQuestionId: id as Id<"surveyQuestions"> });
+  };
+
+  // Handle survey submission
+  const handleSurveySubmit = async (responses: Map<string, string>) => {
+    const responsesArray = Array.from(responses.entries()).map(([questionId, response]) => ({
+      surveyQuestionId: questionId as Id<"surveyQuestions">,
+      response,
+    }));
+
+    await submitSurveyResponses({
+      videoId: videoIdTyped,
+      responses: responsesArray,
+      sessionId: `session-${Date.now()}`,
+    });
+
+    setShowSurvey(false);
+  };
+
+  // Handle continue to survey
+  const handleContinueToSurvey = () => {
+    setShowResults(false);
+    setShowSurvey(true);
+  };
+
+  // Handle close survey
+  const handleCloseSurvey = () => {
+    setShowSurvey(false);
+  };
+
   // Handle video ended
   useEffect(() => {
     if (
@@ -267,6 +340,10 @@ function VideoPage() {
               onAddChapter={handleAddChapter}
               onEditChapter={handleEditChapter}
               onDeleteChapter={handleDeleteChapter}
+              surveyQuestions={surveyQuestions}
+              onAddSurveyQuestion={handleAddSurveyQuestion}
+              onEditSurveyQuestion={handleEditSurveyQuestion}
+              onDeleteSurveyQuestion={handleDeleteSurveyQuestion}
               currentTime={currentTime}
               videoDuration={videoDuration}
             />
@@ -288,6 +365,16 @@ function VideoPage() {
         answers={answeredQuestions}
         onReplay={handleReplay}
         onClose={handleCloseResults}
+        hasSurvey={surveyQuestions.length > 0}
+        onContinue={handleContinueToSurvey}
+      />
+
+      {/* Survey Dialog */}
+      <SurveyDialog
+        isOpen={showSurvey}
+        surveyQuestions={surveyQuestions}
+        onSubmit={handleSurveySubmit}
+        onClose={handleCloseSurvey}
       />
     </div>
   );

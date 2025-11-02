@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, ArrowRight } from "lucide-react";
 import { Question } from "./VideoPlayer";
 
 interface ResultsSummaryProps {
@@ -18,6 +18,8 @@ interface ResultsSummaryProps {
   answers: Map<string, number>;
   onReplay: () => void;
   onClose: () => void;
+  onContinue?: () => void;
+  hasSurvey?: boolean;
 }
 
 export function ResultsSummary({
@@ -26,6 +28,8 @@ export function ResultsSummary({
   answers,
   onReplay,
   onClose,
+  onContinue,
+  hasSurvey = false,
 }: ResultsSummaryProps) {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -119,13 +123,27 @@ export function ResultsSummary({
         </ScrollArea>
 
         <div className="flex gap-2 pt-4">
-          <Button onClick={onReplay} className="flex-1">
-            <RotateCcw className="mr-2 h-4 w-4" />
-            Replay Video
-          </Button>
-          <Button variant="outline" onClick={onClose} className="flex-1">
-            Close
-          </Button>
+          {hasSurvey && onContinue ? (
+            <>
+              <Button onClick={onContinue} className="flex-1">
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Continue to Survey
+              </Button>
+              <Button variant="outline" onClick={onClose} className="flex-1">
+                Skip
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={onReplay} className="flex-1">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Replay Video
+              </Button>
+              <Button variant="outline" onClick={onClose} className="flex-1">
+                Close
+              </Button>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

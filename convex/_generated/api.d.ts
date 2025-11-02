@@ -10,6 +10,7 @@
 
 import type * as chapters from "../chapters.js";
 import type * as questions from "../questions.js";
+import type * as surveys from "../surveys.js";
 import type * as videos from "../videos.js";
 
 import type {
@@ -29,6 +30,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   chapters: typeof chapters;
   questions: typeof questions;
+  surveys: typeof surveys;
   videos: typeof videos;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
