@@ -118,3 +118,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Video player specific styles */
+  video {
+    @apply object-contain;
+  }
+
+  /* Smooth transitions for interactive elements */
+  .video-control-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Hide default video controls */
+  video::-webkit-media-controls {
+    display: none !important;
+  }
+
+  video::-webkit-media-controls-enclosure {
+    display: none !important;
+  }
+}
