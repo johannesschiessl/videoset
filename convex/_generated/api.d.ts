@@ -8,6 +8,10 @@
  * @module
  */
 
+import type * as chapters from "../chapters.js";
+import type * as questions from "../questions.js";
+import type * as videos from "../videos.js";
+
 import type {
   ApiFromModules,
   FilterApi,
@@ -22,7 +26,11 @@ import type {
  * const myFunctionReference = api.myModule.myFunction;
  * ```
  */
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  chapters: typeof chapters;
+  questions: typeof questions;
+  videos: typeof videos;
+}>;
 declare const fullApiWithMounts: typeof fullApi;
 
 export declare const api: FilterApi<

@@ -4,6 +4,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ConvexClientProvider } from "@/components/providers/convex-provider";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -37,9 +38,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          {children}
-        </ThemeProvider>
+        <ConvexClientProvider>
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            {children}
+          </ThemeProvider>
+        </ConvexClientProvider>
         <TanStackDevtools
           config={{
             position: "bottom-right",

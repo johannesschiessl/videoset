@@ -17,6 +17,7 @@ export interface Question {
 
 interface VideoPlayerProps {
   videoFile: File | null;
+  videoUrl?: string | null;
   onVideoLoad: (url: string, duration: number) => void;
   questions: Question[];
   currentTime: number;
@@ -28,6 +29,7 @@ interface VideoPlayerProps {
 
 export function VideoPlayer({
   videoFile,
+  videoUrl: externalVideoUrl,
   onVideoLoad,
   questions,
   currentTime,
@@ -40,13 +42,16 @@ export function VideoPlayer({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [localVideoUrl, setLocalVideoUrl] = useState<string | null>(null);
+
+  // Use external URL if provided, otherwise use local file
+  const videoUrl = externalVideoUrl || localVideoUrl;
 
   // Handle video file change
   useEffect(() => {
     if (videoFile) {
       const url = URL.createObjectURL(videoFile);
-      setVideoUrl(url);
+      setLocalVideoUrl(url);
 
       return () => {
         if (url) {
@@ -148,7 +153,7 @@ export function VideoPlayer({
     return (timestamp / duration) * 100;
   };
 
-  if (!videoFile) {
+  if (!videoFile && !externalVideoUrl) {
     return (
       <Card className="flex h-full min-h-[400px] items-center justify-center border-dashed">
         <p className="text-muted-foreground">No video selected</p>
