@@ -65,9 +65,9 @@ function App() {
         duration: videoDuration,
       });
 
-      // Step 5: Navigate to video page
+      // Step 5: Navigate to video edit page
       setUploadProgress("Done!");
-      navigate({ to: `/video/$videoId`, params: { videoId } });
+      navigate({ to: `/video/$videoId/edit`, params: { videoId } });
     } catch (error) {
       console.error("Upload error:", error);
       setUploadProgress("Upload failed. Please try again.");

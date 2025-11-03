@@ -4,14 +4,13 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { ManagementPanel } from "@/components/ManagementPanel";
 import { ChapterNavigation } from "@/components/ChapterNavigation";
-import { QuestionOverlay } from "@/components/QuestionOverlay";
-import { ResultsSummary } from "@/components/ResultsSummary";
-import { SurveyDialog } from "@/components/SurveyDialog";
+import { InlineQuestion } from "@/components/InlineQuestion";
+import { InlineResults } from "@/components/InlineResults";
+import { FullScreenSurvey } from "@/components/FullScreenSurvey";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/video/$videoId")({
+export const Route = createFileRoute("/video/$videoId/")({
   component: VideoPage,
 });
 
@@ -32,15 +31,6 @@ function VideoPage() {
   });
 
   // Mutations
-  const addQuestion = useMutation(api.questions.addQuestion);
-  const updateQuestion = useMutation(api.questions.updateQuestion);
-  const deleteQuestion = useMutation(api.questions.deleteQuestion);
-  const addChapter = useMutation(api.chapters.addChapter);
-  const updateChapter = useMutation(api.chapters.updateChapter);
-  const deleteChapter = useMutation(api.chapters.deleteChapter);
-  const addSurveyQuestion = useMutation(api.surveys.addSurveyQuestion);
-  const updateSurveyQuestion = useMutation(api.surveys.updateSurveyQuestion);
-  const deleteSurveyQuestion = useMutation(api.surveys.deleteSurveyQuestion);
   const submitSurveyResponses = useMutation(api.surveys.submitSurveyResponses);
 
   // Video state
@@ -96,7 +86,7 @@ function VideoPage() {
     setCurrentTime(time);
 
     // Check if we should trigger a question
-    if (!showQuestionOverlay && !showResults && isPlaying) {
+    if (!showQuestionOverlay && !showResults && !showSurvey && isPlaying) {
       for (const question of questions) {
         if (
           !triggeredQuestionsRef.current.has(question.id) &&
@@ -139,85 +129,10 @@ function VideoPage() {
     }
   };
 
-  // Question management
-  const handleAddQuestion = async (questionData: any) => {
-    await addQuestion({
-      videoId: videoIdTyped,
-      timestamp: questionData.timestamp,
-      questionText: questionData.questionText,
-      options: questionData.options,
-    });
-  };
-
-  const handleEditQuestion = async (id: string, questionData: any) => {
-    await updateQuestion({
-      questionId: id as Id<"questions">,
-      timestamp: questionData.timestamp,
-      questionText: questionData.questionText,
-      options: questionData.options,
-    });
-  };
-
-  const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestion({ questionId: id as Id<"questions"> });
-    triggeredQuestionsRef.current.delete(id);
-    const newAnswers = new Map(answeredQuestions);
-    newAnswers.delete(id);
-    setAnsweredQuestions(newAnswers);
-  };
-
-  // Chapter management
-  const handleAddChapter = async (chapterData: any) => {
-    await addChapter({
-      videoId: videoIdTyped,
-      timestamp: chapterData.timestamp,
-      title: chapterData.title,
-    });
-  };
-
-  const handleEditChapter = async (id: string, chapterData: any) => {
-    await updateChapter({
-      chapterId: id as Id<"chapters">,
-      timestamp: chapterData.timestamp,
-      title: chapterData.title,
-    });
-  };
-
-  const handleDeleteChapter = async (id: string) => {
-    await deleteChapter({ chapterId: id as Id<"chapters"> });
-  };
-
   // Handle chapter click
   const handleChapterClick = (timestamp: number) => {
     setCurrentTime(timestamp);
     setIsPlaying(true);
-  };
-
-  // Survey management
-  const handleAddSurveyQuestion = async (surveyData: any) => {
-    await addSurveyQuestion({
-      videoId: videoIdTyped,
-      questionText: surveyData.questionText,
-      questionType: surveyData.questionType,
-      options: surveyData.options,
-      required: surveyData.required,
-      order: surveyData.order,
-    });
-  };
-
-  const handleEditSurveyQuestion = async (id: string, surveyData: any) => {
-    await updateSurveyQuestion({
-      surveyQuestionId: id as Id<"surveyQuestions">,
-      questionText: surveyData.questionText,
-      questionType: surveyData.questionType,
-      options: surveyData.options,
-      required: surveyData.required,
-      order: surveyData.order,
-    });
-  };
-
-  const handleDeleteSurveyQuestion = async (id: string) => {
-    await deleteSurveyQuestion({ surveyQuestionId: id as Id<"surveyQuestions"> });
   };
 
   // Handle survey submission
@@ -234,6 +149,8 @@ function VideoPage() {
     });
 
     setShowSurvey(false);
+    // Optionally redirect or show a thank you message
+    alert("Thank you for completing the survey!");
   };
 
   // Handle continue to survey
@@ -242,37 +159,19 @@ function VideoPage() {
     setShowSurvey(true);
   };
 
-  // Handle close survey
-  const handleCloseSurvey = () => {
-    setShowSurvey(false);
-  };
-
   // Handle video ended
   useEffect(() => {
     if (
       videoDuration > 0 &&
       currentTime >= videoDuration - 1 &&
       !showResults &&
+      !showSurvey &&
       questions.length > 0
     ) {
       setShowResults(true);
       setIsPlaying(false);
     }
-  }, [currentTime, videoDuration, showResults, questions.length]);
-
-  // Handle replay
-  const handleReplay = () => {
-    setCurrentTime(0);
-    setShowResults(false);
-    setAnsweredQuestions(new Map());
-    triggeredQuestionsRef.current.clear();
-    setIsPlaying(true);
-  };
-
-  // Handle close results
-  const handleCloseResults = () => {
-    setShowResults(false);
-  };
+  }, [currentTime, videoDuration, showResults, showSurvey, questions.length]);
 
   if (!video) {
     return (
@@ -290,9 +189,34 @@ function VideoPage() {
     );
   }
 
+  // Show survey full screen
+  if (showSurvey && surveyQuestions.length > 0) {
+    return (
+      <FullScreenSurvey
+        surveyQuestions={surveyQuestions}
+        onSubmit={handleSurveySubmit}
+      />
+    );
+  }
+
+  // Show results full screen
+  if (showResults) {
+    return (
+      <div className="min-h-screen p-4">
+        <InlineResults
+          questions={questions}
+          answers={answeredQuestions}
+          hasSurvey={surveyQuestions.length > 0}
+          onContinue={handleContinueToSurvey}
+        />
+      </div>
+    );
+  }
+
+  // Main player view
   return (
     <div className="min-h-screen p-4">
-      <div className="mx-auto max-w-7xl space-y-4">
+      <div className="mx-auto max-w-6xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">{video.title}</h1>
@@ -301,14 +225,14 @@ function VideoPage() {
               {chapters.length} chapter{chapters.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <Button variant="outline" onClick={() => window.location.href = "/"}>
-            New Video
+          <Button variant="outline" onClick={() => window.location.href = `/video/${videoId}/edit`}>
+            Edit Mode
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          {/* Video Player - 2 columns on large screens */}
-          <div className="space-y-4 lg:col-span-2">
+        <div className="space-y-4">
+          {/* Video Player with inline question overlay */}
+          <div className="relative">
             <VideoPlayer
               videoFile={null}
               videoUrl={video.url}
@@ -321,61 +245,22 @@ function VideoPage() {
               onSeek={handleSeek}
             />
 
-            {/* Chapter Navigation */}
-            <ChapterNavigation
-              chapters={chapters}
-              currentTime={currentTime}
-              onChapterClick={handleChapterClick}
+            {/* Inline Question Overlay */}
+            <InlineQuestion
+              question={currentQuestion}
+              isVisible={showQuestionOverlay}
+              onAnswer={handleAnswer}
             />
           </div>
 
-          {/* Management Panel - 1 column on large screens */}
-          <div className="lg:col-span-1">
-            <ManagementPanel
-              questions={questions}
-              onAddQuestion={handleAddQuestion}
-              onEditQuestion={handleEditQuestion}
-              onDeleteQuestion={handleDeleteQuestion}
-              chapters={chapters}
-              onAddChapter={handleAddChapter}
-              onEditChapter={handleEditChapter}
-              onDeleteChapter={handleDeleteChapter}
-              surveyQuestions={surveyQuestions}
-              onAddSurveyQuestion={handleAddSurveyQuestion}
-              onEditSurveyQuestion={handleEditSurveyQuestion}
-              onDeleteSurveyQuestion={handleDeleteSurveyQuestion}
-              currentTime={currentTime}
-              videoDuration={videoDuration}
-            />
-          </div>
+          {/* Chapter Navigation */}
+          <ChapterNavigation
+            chapters={chapters}
+            currentTime={currentTime}
+            onChapterClick={handleChapterClick}
+          />
         </div>
       </div>
-
-      {/* Question Overlay */}
-      <QuestionOverlay
-        question={currentQuestion}
-        isOpen={showQuestionOverlay}
-        onAnswer={handleAnswer}
-      />
-
-      {/* Results Summary */}
-      <ResultsSummary
-        isOpen={showResults}
-        questions={questions}
-        answers={answeredQuestions}
-        onReplay={handleReplay}
-        onClose={handleCloseResults}
-        hasSurvey={surveyQuestions.length > 0}
-        onContinue={handleContinueToSurvey}
-      />
-
-      {/* Survey Dialog */}
-      <SurveyDialog
-        isOpen={showSurvey}
-        surveyQuestions={surveyQuestions}
-        onSubmit={handleSurveySubmit}
-        onClose={handleCloseSurvey}
-      />
     </div>
   );
 }
