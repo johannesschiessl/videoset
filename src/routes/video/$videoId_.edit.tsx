@@ -41,7 +41,7 @@ function VideoEditPage() {
   const addSurveyQuestion = useMutation(api.surveys.addSurveyQuestion);
   const updateSurveyQuestion = useMutation(api.surveys.updateSurveyQuestion);
   const deleteSurveyQuestion = useMutation(api.surveys.deleteSurveyQuestion);
-  const submitSurveyResponses = useMutation(api.surveys.submitSurveyResponses);
+  // Note: We don't submit survey responses in edit mode - only in view mode
 
   // Video state
   const [videoDuration, setVideoDuration] = useState(0);
@@ -220,20 +220,11 @@ function VideoEditPage() {
     await deleteSurveyQuestion({ surveyQuestionId: id as Id<"surveyQuestions"> });
   };
 
-  // Handle survey submission
+  // Handle survey submission (preview only - doesn't save in edit mode)
   const handleSurveySubmit = async (responses: Map<string, string>) => {
-    const responsesArray = Array.from(responses.entries()).map(([questionId, response]) => ({
-      surveyQuestionId: questionId as Id<"surveyQuestions">,
-      response,
-    }));
-
-    await submitSurveyResponses({
-      videoId: videoIdTyped,
-      responses: responsesArray,
-      sessionId: `session-${Date.now()}`,
-    });
-
+    // In edit mode, we just preview the survey without saving responses
     setShowSurvey(false);
+    alert("Survey preview completed! (Responses are not saved in edit mode)");
   };
 
   // Handle continue to survey
