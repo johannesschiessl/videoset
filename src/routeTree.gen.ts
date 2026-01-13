@@ -8,52 +8,161 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as VideoVideoIdRouteImport } from './routes/video/$videoId'
+import { Route as DashboardEditorNewRouteImport } from './routes/dashboard/editor/new'
+import { Route as DashboardEditorVideoIdRouteImport } from './routes/dashboard/editor/$videoId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VideoVideoIdRoute = VideoVideoIdRouteImport.update({
+  id: '/video/$videoId',
+  path: '/video/$videoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardEditorNewRoute = DashboardEditorNewRouteImport.update({
+  id: '/dashboard/editor/new',
+  path: '/dashboard/editor/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardEditorVideoIdRoute = DashboardEditorVideoIdRouteImport.update({
+  id: '/dashboard/editor/$videoId',
+  path: '/dashboard/editor/$videoId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/video/$videoId': typeof VideoVideoIdRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/editor/$videoId': typeof DashboardEditorVideoIdRoute
+  '/dashboard/editor/new': typeof DashboardEditorNewRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/video/$videoId': typeof VideoVideoIdRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/editor/$videoId': typeof DashboardEditorVideoIdRoute
+  '/dashboard/editor/new': typeof DashboardEditorNewRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/video/$videoId': typeof VideoVideoIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/editor/$videoId': typeof DashboardEditorVideoIdRoute
+  '/dashboard/editor/new': typeof DashboardEditorNewRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/";
-  id: "__root__" | "/";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/video/$videoId'
+    | '/dashboard'
+    | '/dashboard/editor/$videoId'
+    | '/dashboard/editor/new'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/video/$videoId'
+    | '/dashboard'
+    | '/dashboard/editor/$videoId'
+    | '/dashboard/editor/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/video/$videoId'
+    | '/dashboard/'
+    | '/dashboard/editor/$videoId'
+    | '/dashboard/editor/new'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
+  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  VideoVideoIdRoute: typeof VideoVideoIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardEditorVideoIdRoute: typeof DashboardEditorVideoIdRoute
+  DashboardEditorNewRoute: typeof DashboardEditorNewRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/video/$videoId': {
+      id: '/video/$videoId'
+      path: '/video/$videoId'
+      fullPath: '/video/$videoId'
+      preLoaderRoute: typeof VideoVideoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/editor/new': {
+      id: '/dashboard/editor/new'
+      path: '/dashboard/editor/new'
+      fullPath: '/dashboard/editor/new'
+      preLoaderRoute: typeof DashboardEditorNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/editor/$videoId': {
+      id: '/dashboard/editor/$videoId'
+      path: '/dashboard/editor/$videoId'
+      fullPath: '/dashboard/editor/$videoId'
+      preLoaderRoute: typeof DashboardEditorVideoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-};
+  AuthRoute: AuthRoute,
+  VideoVideoIdRoute: VideoVideoIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardEditorVideoIdRoute: DashboardEditorVideoIdRoute,
+  DashboardEditorNewRoute: DashboardEditorNewRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
